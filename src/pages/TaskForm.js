@@ -14,53 +14,77 @@ const TaskForm = () => {
     }
   }, [id]);
 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       if (id) {
+        // Mise à jour d'une tâche
         await api.put(`/tasks/${id}`, task);
       } else {
+        // Création d'une nouvelle tâche
         await api.post('/tasks', task);
       }
       navigate('/');
     } catch (error) {
-      alert('Error saving task!');
+      console.error(error.response?.data || 'Error updating task');
+      alert('Failed to update task');
     }
   };
+  
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white p-6 rounded shadow-md">
-      <h2 className="text-2xl font-bold mb-4">{id ? 'Edit Task' : 'Create Task'}</h2>
-      <input
-        type="text"
-        placeholder="Title"
-        value={task.title}
-        onChange={(e) => setTask({ ...task, title: e.target.value })}
-        className="w-full p-2 border rounded mb-4"
-      />
-      <textarea
-        placeholder="Description"
-        value={task.description}
-        onChange={(e) => setTask({ ...task, description: e.target.value })}
-        className="w-full p-2 border rounded mb-4"
-      />
-      <input
-        type="datetime-local"
-        value={task.due_date}
-        onChange={(e) => setTask({ ...task, due_date: e.target.value })}
-        className="w-full p-2 border rounded mb-4"
-      />
-      <label className="flex items-center mb-4">
-        <input
-          type="checkbox"
-          checked={task.status}
-          onChange={(e) => setTask({ ...task, status: e.target.checked })}
-        />
-        <span className="ml-2">Completed</span>
-      </label>
-      <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded">Save Task</button>
-    </form>
-  );
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <div className="bg-white p-8 rounded shadow-md w-full max-w-md">
+        <h2 className="text-2xl font-bold text-gray-800 text-center mb-6">
+          {id ? 'Edit Task' : 'Create Task'}
+        </h2>
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label className="block text-gray-700">Title</label>
+            <input
+              type="text"
+              className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={task.title}
+              onChange={(e) => setTask({ ...task, title: e.target.value })}
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700">Description</label>
+            <textarea
+              className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={task.description}
+              onChange={(e) => setTask({ ...task, description: e.target.value })}
+            ></textarea>
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700">Due Date</label>
+            <input
+              type="datetime-local"
+              className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={task.due_date}
+              onChange={(e) => setTask({ ...task, due_date: e.target.value })}
+            />
+          </div>
+          <div className="mb-4 flex items-center">
+            <input
+              type="checkbox"
+              checked={task.status}
+              onChange={(e) => setTask({ ...task, status: e.target.checked })}
+              className="mr-2"
+            />
+            <label className="text-gray-700">Mark as Completed</label>
+          </div>
+          <button
+            type="submit"
+            className="w-full bg-blue-500 hover:bg-blue-600 text-white p-2 rounded transition"
+          >
+            {id ? 'Update Task' : 'Create Task'}
+          </button>
+        </form>
+      </div>
+    </div>
+  )
 };
 
 export default TaskForm;
